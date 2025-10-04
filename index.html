@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.74/build/spline-viewer.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -35,48 +36,12 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-background"></div>
+        <div class="hero-background">
+            <spline-viewer url="https://prod.spline.design/67yIvrH8OMw1iEHF/scene.splinecode"></spline-viewer>
+        </div>
         <div class="hero-overlay"></div>
-        <div class="container hero-content">
-            <!-- Left Side: Hero Text -->
-            <div class="hero-left">
-                <div class="hero-brand">
-                    <h1 class="hero-main-title">Swasthya Sakhi</h1>
-                    <p class="hero-tagline">Your AI-Powered Health Companion</p>
-                </div>
-                <p class="hero-description">
-                    Breaking healthcare data barriers with multilingual AI. Access unified health information 
-                    through WhatsApp & SMS—no internet, no barriers, just care.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">
-                        <span>Get Started</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
-                    <a href="#features" class="btn btn-secondary">
-                        <span>Learn More</span>
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">20%</span>
-                        <span class="stat-label">Health Awareness ↑</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">95%</span>
-                        <span class="stat-label">Language Accuracy</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">24/7</span>
-                        <span class="stat-label">Available</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side: Phone Mockup with Chatbot -->
+        <div class="hero-content">
+            <!-- Phone Mockup with Chatbot -->
             <div class="hero-right">
                 <div class="phone-mockup">
                     <div class="phone-frame">
@@ -133,10 +98,6 @@
                     <div class="phone-shadow"></div>
                 </div>
             </div>
-        </div>
-        <div class="scroll-indicator">
-            <span>Scroll to explore</span>
-            <div class="scroll-arrow"></div>
         </div>
     </section>
 
