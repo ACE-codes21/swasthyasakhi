@@ -163,23 +163,51 @@ class LiquidChrome {
         window.addEventListener('resize', this.handleResize);
 
         if (this.interactive) {
+            this.targetMouse = { x: 0.5, y: 0.5 };
+            this.currentMouse = { x: 0.5, y: 0.5 };
+            this.mouseVelocity = { x: 0, y: 0 };
+            this.isHovering = false;
+
             this.handleMouseMove = (e) => {
                 const rect = this.container.getBoundingClientRect();
-                this.mouse.x = (e.clientX - rect.left) / rect.width;
-                this.mouse.y = 1 - (e.clientY - rect.top) / rect.height;
+                this.targetMouse.x = (e.clientX - rect.left) / rect.width;
+                this.targetMouse.y = 1 - (e.clientY - rect.top) / rect.height;
+                this.isHovering = true;
+            };
+
+            this.handleMouseEnter = () => {
+                this.isHovering = true;
+                this.container.style.cursor = 'pointer';
+            };
+
+            this.handleMouseLeave = () => {
+                this.isHovering = false;
+                this.targetMouse.x = 0.5;
+                this.targetMouse.y = 0.5;
+                this.container.style.cursor = 'default';
             };
 
             this.handleTouchMove = (e) => {
                 if (e.touches.length > 0) {
                     const touch = e.touches[0];
                     const rect = this.container.getBoundingClientRect();
-                    this.mouse.x = (touch.clientX - rect.left) / rect.width;
-                    this.mouse.y = 1 - (touch.clientY - rect.top) / rect.height;
+                    this.targetMouse.x = (touch.clientX - rect.left) / rect.width;
+                    this.targetMouse.y = 1 - (touch.clientY - rect.top) / rect.height;
+                    this.isHovering = true;
                 }
             };
 
+            this.handleTouchEnd = () => {
+                this.isHovering = false;
+                this.targetMouse.x = 0.5;
+                this.targetMouse.y = 0.5;
+            };
+
             this.container.addEventListener('mousemove', this.handleMouseMove);
+            this.container.addEventListener('mouseenter', this.handleMouseEnter);
+            this.container.addEventListener('mouseleave', this.handleMouseLeave);
             this.container.addEventListener('touchmove', this.handleTouchMove);
+            this.container.addEventListener('touchend', this.handleTouchEnd);
         }
     }
 
@@ -200,6 +228,20 @@ class LiquidChrome {
     animate() {
         this.animationId = requestAnimationFrame(this.animate.bind(this));
         
+        // Smooth mouse movement with easing
+        if (this.interactive) {
+            const ease = this.isHovering ? 0.15 : 0.05;
+            this.currentMouse.x += (this.targetMouse.x - this.currentMouse.x) * ease;
+            this.currentMouse.y += (this.targetMouse.y - this.currentMouse.y) * ease;
+            
+            // Calculate velocity for ripple effect
+            this.mouseVelocity.x = this.targetMouse.x - this.currentMouse.x;
+            this.mouseVelocity.y = this.targetMouse.y - this.currentMouse.y;
+            
+            this.mouse.x = this.currentMouse.x;
+            this.mouse.y = this.currentMouse.y;
+        }
+        
         const currentTime = (Date.now() - this.startTime) * 0.001 * this.speed;
         this.gl.uniform1f(this.uniforms.uTime, currentTime);
         this.gl.uniform2f(this.uniforms.uMouse, this.mouse.x, this.mouse.y);
@@ -217,7 +259,10 @@ class LiquidChrome {
 
         if (this.interactive) {
             this.container.removeEventListener('mousemove', this.handleMouseMove);
+            this.container.removeEventListener('mouseenter', this.handleMouseEnter);
+            this.container.removeEventListener('mouseleave', this.handleMouseLeave);
             this.container.removeEventListener('touchmove', this.handleTouchMove);
+            this.container.removeEventListener('touchend', this.handleTouchEnd);
         }
 
         if (this.canvas && this.canvas.parentElement) {

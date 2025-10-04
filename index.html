@@ -16,7 +16,6 @@
             <div class="nav-content">
                 <div class="logo">
                     <h2>Swasthya Sakhi</h2>
-                    <span class="tagline">AI Powered Health Assistant</span>
                 </div>
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
@@ -39,31 +38,99 @@
         <div class="hero-background"></div>
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">
-                    <span class="title-line highlight">Swasthya Sakhi</span>
-                </h1>
+            <!-- Left Side: Hero Text -->
+            <div class="hero-left">
+                <div class="hero-brand">
+                    <h1 class="hero-main-title">Swasthya Sakhi</h1>
+                    <p class="hero-tagline">Your AI-Powered Health Companion</p>
+                </div>
                 <p class="hero-description">
-                    Your AI-powered multilingual health companion. Accessible via WhatsApp & SMS, 
-                    bringing unified health information and care coordination to every pocket.
+                    Breaking healthcare data barriers with multilingual AI. Access unified health information 
+                    through WhatsApp & SMS—no internet, no barriers, just care.
                 </p>
                 <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">Try Demo</a>
-                    <a href="#features" class="btn btn-secondary">Learn More</a>
+                    <a href="#contact" class="btn btn-primary">
+                        <span>Get Started</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        <span>Learn More</span>
+                    </a>
                 </div>
                 <div class="hero-stats">
-                    <div class="stat">
+                    <div class="stat-item">
                         <span class="stat-number">20%</span>
-                        <span class="stat-label">Health Awareness Increase</span>
+                        <span class="stat-label">Health Awareness ↑</span>
                     </div>
-                    <div class="stat">
-                        <span class="stat-number">30%</span>
-                        <span class="stat-label">Disease Prevention</span>
-                    </div>
-                    <div class="stat">
+                    <div class="stat-item">
                         <span class="stat-number">95%</span>
                         <span class="stat-label">Language Accuracy</span>
                     </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Available</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Phone Mockup with Chatbot -->
+            <div class="hero-right">
+                <div class="phone-mockup">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <!-- Chat Interface -->
+                            <div class="chat-interface">
+                                <div class="chat-header-phone">
+                                    <div class="chat-header-info">
+                                        <div class="chat-avatar-phone">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4>Swasthya Sakhi</h4>
+                                            <span class="online-status">● Online</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-messages-phone" id="phoneChatMessages">
+                                    <div class="message-wrapper bot-wrapper">
+                                        <div class="message-phone bot-message">
+                                            <p>Hello! 👋 I'm Swasthya Sakhi</p>
+                                        </div>
+                                    </div>
+                                    <div class="message-wrapper bot-wrapper">
+                                        <div class="message-phone bot-message">
+                                            <p>How can I help you today?</p>
+                                        </div>
+                                    </div>
+                                    <div class="quick-replies">
+                                        <button class="quick-reply" data-message="मुझे बुखार है">🤒 I have fever</button>
+                                        <button class="quick-reply" data-message="Vaccination info">💉 Vaccination</button>
+                                        <button class="quick-reply" data-message="Health tips">💊 Health Tips</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-input-phone">
+                                    <input type="text" id="phoneInput" placeholder="Type your message..." />
+                                    <button id="phoneSendBtn">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="phone-button"></div>
+                    </div>
+                    <div class="phone-shadow"></div>
                 </div>
             </div>
         </div>

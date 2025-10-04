@@ -1,3 +1,92 @@
+// Phone Chatbot Functionality
+const phoneChatMessages = document.getElementById('phoneChatMessages');
+const phoneInput = document.getElementById('phoneInput');
+const phoneSendBtn = document.getElementById('phoneSendBtn');
+const quickReplies = document.querySelectorAll('.quick-reply');
+
+// Predefined responses
+const botResponses = {
+    'fever': 'I understand you have a fever. 🌡️ Here are some recommendations:\n\n1. Rest and stay hydrated\n2. Monitor your temperature\n3. If fever persists >3 days, consult a doctor\n\nShall I check for disease outbreaks in your area?',
+    'बुखार': 'मुझे समझ आ गया कि आपको बुखार है। 🌡️ यहाँ कुछ सुझाव हैं:\n\n1. आराम करें और पानी पिएं\n2. अपना तापमान जांचें\n3. यदि बुखार 3 दिन से अधिक रहे, तो डॉक्टर से मिलें',
+    'vaccination': '💉 Vaccination Information:\n\n• COVID-19 booster doses available\n• Annual flu shots recommended\n• HPV vaccines for teens\n\nWould you like to book an appointment?',
+    'health tips': '💪 Daily Health Tips:\n\n• Drink 8 glasses of water\n• 30 min exercise daily\n• 7-8 hours sleep\n• Balanced diet with fruits & veggies\n\nStay healthy! 🌟',
+    'default': 'Thank you for your message! 😊 I\'m here to help with:\n\n• Health information\n• Symptom checking\n• Vaccination schedules\n• Medical advice\n\nWhat would you like to know?'
+};
+
+function addMessage(text, isUser = false) {
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = `message-wrapper ${isUser ? 'user-wrapper' : 'bot-wrapper'}`;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message-phone ${isUser ? 'user-message' : 'bot-message'}`;
+    
+    const p = document.createElement('p');
+    p.textContent = text;
+    p.style.whiteSpace = 'pre-line';
+    
+    messageDiv.appendChild(p);
+    messageWrapper.appendChild(messageDiv);
+    
+    // Remove quick replies if they exist
+    const existingQuickReplies = phoneChatMessages.querySelector('.quick-replies');
+    if (existingQuickReplies) {
+        existingQuickReplies.remove();
+    }
+    
+    phoneChatMessages.appendChild(messageWrapper);
+    phoneChatMessages.scrollTop = phoneChatMessages.scrollHeight;
+}
+
+function getBotResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    
+    if (message.includes('fever') || message.includes('बुखार')) {
+        return botResponses['fever'];
+    } else if (message.includes('vaccin')) {
+        return botResponses['vaccination'];
+    } else if (message.includes('health') || message.includes('tips')) {
+        return botResponses['health tips'];
+    } else {
+        return botResponses['default'];
+    }
+}
+
+function sendPhoneMessage() {
+    const message = phoneInput.value.trim();
+    if (message) {
+        // Add user message
+        addMessage(message, true);
+        phoneInput.value = '';
+        
+        // Show typing indicator
+        setTimeout(() => {
+            const response = getBotResponse(message);
+            addMessage(response, false);
+        }, 1000);
+    }
+}
+
+if (phoneSendBtn) {
+    phoneSendBtn.addEventListener('click', sendPhoneMessage);
+}
+
+if (phoneInput) {
+    phoneInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendPhoneMessage();
+        }
+    });
+}
+
+// Quick reply buttons
+quickReplies.forEach(button => {
+    button.addEventListener('click', () => {
+        const message = button.getAttribute('data-message');
+        phoneInput.value = message;
+        sendPhoneMessage();
+    });
+});
+
 // Mobile Menu Toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
@@ -143,10 +232,17 @@ document.querySelectorAll('.stat-number').forEach(stat => {
 // Parallax Effect for Hero
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero-content');
-    if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-        hero.style.opacity = 1 - (scrolled / 800);
+    const heroLeft = document.querySelector('.hero-left');
+    const heroRight = document.querySelector('.hero-right');
+    
+    if (heroLeft && scrolled < window.innerHeight) {
+        heroLeft.style.transform = `translateY(${scrolled * 0.3}px)`;
+        heroLeft.style.opacity = 1 - (scrolled / 800);
+    }
+    
+    if (heroRight && scrolled < window.innerHeight) {
+        heroRight.style.transform = `translateY(${scrolled * 0.2}px)`;
+        heroRight.style.opacity = 1 - (scrolled / 900);
     }
 });
 
