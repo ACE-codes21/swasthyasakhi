@@ -1,3 +1,93 @@
+// Scroll Stack Animation - Card Deck Style
+function initScrollStack() {
+    const stackCards = document.querySelectorAll('.stack-card');
+    console.log('🎴 Stack cards found:', stackCards.length);
+    
+    if (stackCards.length === 0) {
+        console.warn('⚠️ No stack cards found. Retrying in 500ms...');
+        setTimeout(initScrollStack, 500);
+        return;
+    }
+
+    console.log('✅ Initializing card deck scroll stack');
+
+    function updateStackCards() {
+        const windowHeight = window.innerHeight;
+        const stickyPoint = 140; // matches CSS top: 140px
+        
+        stackCards.forEach((card, index) => {
+            const rect = card.getBoundingClientRect();
+            const cardTop = rect.top;
+            const cardBottom = rect.bottom;
+            const cardCenter = cardTop + (rect.height / 2);
+            
+            // Remove previous classes
+            card.classList.remove('active', 'stacked');
+            
+            // More precise detection zones
+            const activeZoneTop = stickyPoint - 50;
+            const activeZoneBottom = stickyPoint + 150;
+            const stackedZone = stickyPoint - 50;
+            
+            // Card is in the active zone (at sticky position)
+            if (cardTop <= activeZoneBottom && cardTop >= activeZoneTop) {
+                card.classList.add('active');
+                console.log(`Card ${index + 1} is ACTIVE`);
+            }
+            // Card has been scrolled past the sticky point
+            else if (cardTop < stackedZone) {
+                card.classList.add('stacked');
+                console.log(`Card ${index + 1} is STACKED`);
+            }
+            // For the last card, special handling to ensure it activates
+            else if (index === stackCards.length - 1 && cardTop <= stickyPoint + 200) {
+                card.classList.add('active');
+                console.log(`Card ${index + 1} (LAST) is ACTIVE`);
+            }
+        });
+    }
+
+    // Throttled scroll listener
+    let ticking = false;
+    function onScroll() {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateStackCards();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+        setTimeout(updateStackCards, 100);
+    }, { passive: true });
+    
+    // Initial update with multiple retries
+    setTimeout(updateStackCards, 100);
+    setTimeout(updateStackCards, 500);
+    setTimeout(updateStackCards, 1000);
+    
+    console.log('✅ Card deck initialized successfully!');
+}
+
+// Multiple initialization methods to ensure it works
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollStack);
+} else {
+    initScrollStack();
+}
+
+// Backup initialization
+window.addEventListener('load', () => {
+    const cards = document.querySelectorAll('.stack-card');
+    if (cards.length > 0 && !cards[0].classList.contains('active')) {
+        console.log('🔄 Backup initialization triggered');
+        initScrollStack();
+    }
+});
+
 // Phone Chatbot Functionality
 const phoneChatMessages = document.getElementById('phoneChatMessages');
 const phoneInput = document.getElementById('phoneInput');
@@ -266,6 +356,95 @@ window.addEventListener('scroll', () => {
             item.classList.add('active');
         }
     });
+});
+
+// Innovation cards mouse tracking effect
+const innovationCards = document.querySelectorAll('.innovation-card');
+
+innovationCards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        card.style.setProperty('--mouse-x', `${x}%`);
+        card.style.setProperty('--mouse-y', `${y}%`);
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.setProperty('--mouse-x', '50%');
+        card.style.setProperty('--mouse-y', '50%');
+    });
+});
+
+// Scroll animations - Intersection Observer for fade-in effects
+const fadeObserverOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, fadeObserverOptions);
+
+// Observe all animated elements
+document.querySelectorAll('.problem-card, .solution-highlights li, .timeline-item, .cta-content').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(40px)';
+    el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    fadeObserver.observe(el);
+});
+
+// Add parallax effect to hero background
+const heroParallaxHandler = () => {
+    const scrolled = window.pageYOffset;
+    const heroBackground = document.querySelector('.hero-background');
+    if (heroBackground && scrolled < window.innerHeight) {
+        heroBackground.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+};
+
+window.addEventListener('scroll', heroParallaxHandler, { passive: true });
+
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add cursor glow effect
+const cursor = document.createElement('div');
+cursor.className = 'cursor-glow';
+cursor.style.cssText = `
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    mix-blend-mode: screen;
+    transition: opacity 0.3s ease;
+`;
+document.body.appendChild(cursor);
+
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
 });
 
 console.log('🏥 Swasthya Sakhi - AI Powered Health Assistant Loaded Successfully!');
