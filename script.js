@@ -1,91 +1,128 @@
-// Scroll Stack Animation - Card Deck Style
+// ==========================================
+// REBUILT SCROLL STACK SYSTEM - PROFESSIONAL & RELIABLE
+// ==========================================
+
 function initScrollStack() {
     const stackCards = document.querySelectorAll('.stack-card');
-    console.log('🎴 Stack cards found:', stackCards.length);
     
     if (stackCards.length === 0) {
-        console.warn('⚠️ No stack cards found. Retrying in 500ms...');
         setTimeout(initScrollStack, 500);
         return;
     }
 
-    console.log('✅ Initializing card deck scroll stack');
+    console.log(`✅ Scroll Stack initialized with ${stackCards.length} cards`);
 
-    function updateStackCards() {
-        const windowHeight = window.innerHeight;
-        const stickyPoint = 140; // matches CSS top: 140px
+    const STICKY_TOP = 140; // Must match CSS top value
+    const ACTIVATION_OFFSET = 150; // How far below sticky point to activate
+    let lastActiveIndex = -1;
+    let debugCount = 0;
+    
+    function updateCards() {
+        let activeIndex = -1;
+        let closestCard = -1;
+        let closestDistance = Infinity;
         
+        // Debug every 60 frames (about once per second at 60fps)
+        const shouldDebug = debugCount % 60 === 0;
+        if (shouldDebug) console.log('📊 === Scroll Stack Debug ===');
+        
+        // First pass - find which card should be active
         stackCards.forEach((card, index) => {
             const rect = card.getBoundingClientRect();
             const cardTop = rect.top;
-            const cardBottom = rect.bottom;
-            const cardCenter = cardTop + (rect.height / 2);
+            const distanceFromSticky = Math.abs(cardTop - STICKY_TOP);
             
-            // Remove previous classes
-            card.classList.remove('active', 'stacked');
-            
-            // More precise detection zones
-            const activeZoneTop = stickyPoint - 50;
-            const activeZoneBottom = stickyPoint + 150;
-            const stackedZone = stickyPoint - 50;
-            
-            // Card is in the active zone (at sticky position)
-            if (cardTop <= activeZoneBottom && cardTop >= activeZoneTop) {
-                card.classList.add('active');
-                console.log(`Card ${index + 1} is ACTIVE`);
+            if (shouldDebug) {
+                console.log(`Card ${index + 1}: top=${Math.round(cardTop)}px, distance=${Math.round(distanceFromSticky)}px`);
             }
-            // Card has been scrolled past the sticky point
-            else if (cardTop < stackedZone) {
-                card.classList.add('stacked');
-                console.log(`Card ${index + 1} is STACKED`);
+            
+            // Find the card closest to the sticky point
+            if (distanceFromSticky < closestDistance && cardTop <= STICKY_TOP + ACTIVATION_OFFSET) {
+                closestDistance = distanceFromSticky;
+                closestCard = index;
             }
-            // For the last card, special handling to ensure it activates
-            else if (index === stackCards.length - 1 && cardTop <= stickyPoint + 200) {
-                card.classList.add('active');
-                console.log(`Card ${index + 1} (LAST) is ACTIVE`);
+            
+            // Card is active when it's at or near the sticky point
+            if (cardTop <= STICKY_TOP + ACTIVATION_OFFSET && cardTop >= STICKY_TOP - 50) {
+                activeIndex = index;
             }
         });
+        
+        // If no card is in the exact zone, use the closest one
+        if (activeIndex === -1 && closestCard !== -1) {
+            activeIndex = closestCard;
+        }
+        
+        if (shouldDebug && activeIndex !== -1) {
+            console.log(`✅ Active: Card ${activeIndex + 1}, Closest: Card ${closestCard + 1}`);
+        }
+        
+        // Log when active card changes
+        if (activeIndex !== lastActiveIndex && activeIndex !== -1) {
+            console.log(`🎯 Card ${activeIndex + 1} activated`);
+            lastActiveIndex = activeIndex;
+        }
+        
+        // Second pass - apply states based on active card
+        stackCards.forEach((card, index) => {
+            // Clear all states
+            card.classList.remove('active', 'stacked', 'upcoming');
+            
+            if (index === activeIndex) {
+                // This is the active card
+                card.classList.add('active');
+            } else if (index < activeIndex) {
+                // Cards that already passed (above active)
+                card.classList.add('stacked');
+            } else {
+                // Cards coming up (below active)
+                card.classList.add('upcoming');
+            }
+        });
+        
+        debugCount++;
     }
 
-    // Throttled scroll listener
+    // Throttled scroll with requestAnimationFrame
     let ticking = false;
-    function onScroll() {
+    window.addEventListener('scroll', () => {
         if (!ticking) {
-            window.requestAnimationFrame(() => {
-                updateStackCards();
+            requestAnimationFrame(() => {
+                updateCards();
                 ticking = false;
             });
             ticking = true;
         }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => {
-        setTimeout(updateStackCards, 100);
     }, { passive: true });
-    
-    // Initial update with multiple retries
-    setTimeout(updateStackCards, 100);
-    setTimeout(updateStackCards, 500);
-    setTimeout(updateStackCards, 1000);
-    
-    console.log('✅ Card deck initialized successfully!');
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        requestAnimationFrame(updateCards);
+    }, { passive: true });
+
+    // Initial call
+    requestAnimationFrame(updateCards);
+    setTimeout(updateCards, 100);
+    setTimeout(updateCards, 300);
+    setTimeout(updateCards, 600);
 }
 
-// Multiple initialization methods to ensure it works
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initScrollStack);
 } else {
     initScrollStack();
 }
 
-// Backup initialization
 window.addEventListener('load', () => {
-    const cards = document.querySelectorAll('.stack-card');
-    if (cards.length > 0 && !cards[0].classList.contains('active')) {
-        console.log('🔄 Backup initialization triggered');
-        initScrollStack();
-    }
+    setTimeout(initScrollStack, 200);
+    setTimeout(() => {
+        const cards = document.querySelectorAll('.stack-card');
+        if (cards.length > 0) {
+            console.log('🔄 Force refresh after load');
+            initScrollStack();
+        }
+    }, 500);
 });
 
 // Phone Chatbot Functionality
