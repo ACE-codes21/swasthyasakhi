@@ -650,4 +650,4 @@ if (document.readyState === 'loading') {
 }
 
 console.log('🏥 Swasthya Sakhi - AI Powered Health Assistant Loaded Successfully!');
-console.log('🚀 Built for Smart India Hackathon 2025 by Team UNBOUND');
+console.log('🦈 Built for Shark Tank IIITV by Team QUADX');
