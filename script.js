@@ -43,7 +43,11 @@ function initScrollStack() {
             }
             
             // Card is active when it's at or near the sticky point
-            if (cardTop <= STICKY_TOP + ACTIVATION_OFFSET && cardTop >= STICKY_TOP - 50) {
+            // Special handling for last card (card 6) - more generous activation
+            const isLastCard = index === stackCards.length - 1;
+            const activationRange = isLastCard ? STICKY_TOP + ACTIVATION_OFFSET + 100 : STICKY_TOP + ACTIVATION_OFFSET;
+            
+            if (cardTop <= activationRange && cardTop >= STICKY_TOP - 50) {
                 activeIndex = index;
             }
         });
@@ -483,6 +487,167 @@ document.addEventListener('mousemove', (e) => {
     cursor.style.left = e.clientX + 'px';
     cursor.style.top = e.clientY + 'px';
 });
+
+// ==========================================
+// ENHANCED AUTO-PLAYING CHAT DEMO
+// ==========================================
+
+function initChatDemo() {
+    const chatContainer = document.getElementById('solutionChatMessages');
+    if (!chatContainer) return;
+
+    const conversation = [
+        {
+            type: 'bot',
+            text: 'Hello! I\'m Swasthya Sakhi 👋',
+            delay: 500
+        },
+        {
+            type: 'bot',
+            text: 'I can help you in 12+ languages. How are you feeling today?',
+            delay: 1200
+        },
+        {
+            type: 'user',
+            text: 'मुझे बुखार है (I have fever)',
+            delay: 2000
+        },
+        {
+            type: 'bot',
+            typing: true,
+            delay: 2500
+        },
+        {
+            type: 'bot',
+            html: `
+                <p>I understand you have a fever 🌡️</p>
+                <div class="info-card">
+                    <div class="info-icon">📊</div>
+                    <div class="info-text">
+                        <strong>Area Status:</strong> No active outbreaks in your region
+                    </div>
+                </div>
+                <p><strong>💊 Recommendations:</strong></p>
+                <ul class="bot-list">
+                    <li>Rest and stay hydrated</li>
+                    <li>Monitor temperature every 4 hours</li>
+                    <li>Take paracetamol if needed</li>
+                </ul>
+            `,
+            delay: 3500
+        },
+        {
+            type: 'user',
+            text: 'Should I get tested?',
+            delay: 5500
+        },
+        {
+            type: 'bot',
+            html: `
+                <p>Based on your symptoms, testing is recommended if:</p>
+                <ul class="bot-list">
+                    <li>✅ Fever >101°F for 3+ days</li>
+                    <li>✅ Recent travel history</li>
+                    <li>✅ Contact with infected persons</li>
+                </ul>
+                <div class="action-buttons">
+                    <button class="chat-quick-btn">📍 Find Nearby Clinics</button>
+                    <button class="chat-quick-btn">📅 Book Appointment</button>
+                </div>
+            `,
+            delay: 6500
+        }
+    ];
+
+    let currentIndex = 0;
+    let messageElements = [];
+
+    function addChatMessage(msg) {
+        const messageDiv = document.createElement('div');
+        
+        if (msg.type === 'bot') {
+            messageDiv.className = 'message bot';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
+                <div class="message-content">
+                    ${msg.typing ? '<div class="typing-indicator"><span></span><span></span><span></span></div>' : 
+                    (msg.html || `<p>${msg.text}</p>`)}
+                </div>
+            `;
+        } else {
+            messageDiv.className = 'message user';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${msg.text}</p>
+                </div>
+            `;
+        }
+
+        chatContainer.appendChild(messageDiv);
+        messageElements.push(messageDiv);
+        
+        // Smooth scroll to bottom
+        setTimeout(() => {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 100);
+
+        return messageDiv;
+    }
+
+    function playConversation() {
+        if (currentIndex >= conversation.length) {
+            // Restart after a pause
+            setTimeout(() => {
+                // Clear all messages
+                messageElements.forEach(el => el.remove());
+                messageElements = [];
+                currentIndex = 0;
+                playConversation();
+            }, 5000);
+            return;
+        }
+
+        const msg = conversation[currentIndex];
+        
+        setTimeout(() => {
+            const messageEl = addChatMessage(msg);
+            
+            // Remove typing indicator and show actual message
+            if (msg.typing && currentIndex + 1 < conversation.length) {
+                setTimeout(() => {
+                    messageEl.remove();
+                    messageElements.pop();
+                }, 1000);
+            }
+            
+            currentIndex++;
+            playConversation();
+        }, msg.delay);
+    }
+
+    // Start the conversation
+    playConversation();
+
+    // Add hover effect to pause
+    let isPaused = false;
+    chatContainer.addEventListener('mouseenter', () => {
+        isPaused = true;
+    });
+    chatContainer.addEventListener('mouseleave', () => {
+        isPaused = false;
+    });
+}
+
+// Initialize chat demo when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initChatDemo);
+} else {
+    initChatDemo();
+}
 
 console.log('🏥 Swasthya Sakhi - AI Powered Health Assistant Loaded Successfully!');
 console.log('🚀 Built for Smart India Hackathon 2025 by Team UNBOUND');
